@@ -32,8 +32,72 @@ const resetGame = _ => {
     startTimer()
 }
 
+
+// Adds elements for question screen
+const questionScreen = _ => {
+    currentIndex > 0 ? document.querySelector('body').removeChild(document.querySelector('#container')) : ''
+    document.querySelector('body').innerHTML = `
+        <div id="container" class="grid-y">
+            <div class="cell text-center">
+                <h1>Trivia Title</h1>
+            </div>
+            <div class="grid-x grid-padding-x align-center">
+                <div id="timer-label" class="large-6 medium-6 small-6 cell text-right">
+                    <h3>Time Remaining: </h3>
+                </div>  
+                <div id="timer" class="large-6 medium-6 small-6 cell text-left">
+                    <h3>30 Seconds</h3>
+                </div>
+            </div>
+            <div id="question-container" class="grid-x align-center">
+                <div id="question" class="large-6 medium-8 small-12 cell"><h2>Why?</h2></div>
+            </div>
+            <div id="answers-container" class="grid-x align-center">
+                <div class="large-6 medium-6 small-12 cell text-center">
+                    <ol id="answer-list">
+                        <li id="answer-0" class="answer">None</li>
+                        <li id="answer-1" class="answer">None</li>
+                        <li id="answer-2" class="answer">None</li>
+                        <li id="answer-3" class="answer">None</li>
+                    </ol>
+                </div>
+            </div>
+        </div>`
+}
+
+const answerScreen = (statusLabel, correctLabel) => {
+    clearInterval(timer)
+    currentIndex++
+    document.querySelector('body').removeChild(document.querySelector('#container'))
+    document.querySelector('body').innerHTML = `
+        <div id="container" class="grid-y">
+            <div class="cell text-center">
+                <h1>Trivia Title</h1>
+            </div>
+            <div class="grid-x grid-padding-x align-center">
+                <div id="status-label" class="large-6 medium-6 small-6 cell text-right">
+                    <h3>${statusLabel}</h3>
+                    <br></br>
+                </div>  
+                <div id="correct-label" class="large-6 medium-6 small-6 cell text-left">
+                    <h3>${correctLabel}</h3>
+                </div>
+            </div>
+        </div>`
+    setTimeout(_ => {
+        if (currentIndex < questionIndices.length) {
+            nextQuestion()
+            addAllListeners()
+            startTimer()
+        } else {
+            console.log('End game')
+        }
+    }, 3000)
+}
+
 const nextQuestion = _ => {
     console.log('running nextQuestion')
+    questionScreen()
     // setup next question and answers
     let currentTarget = trivia[questionIndices[currentIndex]]
 
@@ -76,6 +140,17 @@ const mouseOutAnswer = event => {
 const clickAnswer = event => {
     console.log(trivia[questionIndices[currentIndex]].incorrect_answers.includes(event.target.textContent) ? 
         'Wrong' : 'Right')
+    if (trivia[questionIndices[currentIndex]].incorrect_answers.includes(event.target.textContent)) {
+        incorrect++
+        // Go to show video screen
+        // Wrong answer, the correct answer was ...
+        answerScreen('You guessed incorrectly!', `The correct answer was: ${trivia[questionIndices[currentIndex]].correct_answer}`)
+    } else {
+        correct++
+        // Go to show video screen
+        // Correct!
+        answerScreen('You are correct!')
+    }
 }
 
 const clearAllListeners = _ => {
@@ -106,8 +181,10 @@ const startTimer = _ => {
         } else {
             unanswered++
             console.log('time ran out')
-            clearInterval(timer)
             // Run time ran out option
+            // Go to show video screen
+            // You ran out of time. The correct answer was ...
+            answerScreen('You ran out of time...', `The correct answer was: ${trivia[questionIndices[currentIndex]].correct_answer}`)
         }
     }, 1000)
 }
