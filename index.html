@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,11 +10,25 @@
     <link rel="stylesheet" href="./assets/css/style.css">
     <title>Trivia Game</title>
 </head>
+
 <body>
+
+    <div id="container" class="grid-y">
+        <div class="cell text-center">
+            <h1>Trivia Title</h1>
+        </div>
+        <div class="grid-x grid-padding-x align-center">
+            <div id="correct-label" class="large-6 medium-6 small-6 cell text-right">
+                <button id="restart-btn" class="button secondary medium-down-expanded">Start Game</button>
+            </div>
+        </div>
+    </div>
+
     <script src="./assets/javascript/jquery.js"></script>
     <script src="./assets/javascript/what-input.js"></script>
     <script src="./assets/javascript/foundation.min.js"></script>
     <script src="./assets/javascript/constants.js"></script>
     <script src="./assets/javascript/app.js"></script>
 </body>
+
 </html>

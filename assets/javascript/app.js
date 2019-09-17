@@ -1,6 +1,6 @@
 let questionIndices = []
 let timer
-let time = 30
+let time = 3000
 let currentIndex = 0
 let correct = 0
 let incorrect = 0
@@ -20,10 +20,10 @@ const randomizeArray = arr => {
     return arr
 }
 
-const resetGame = _ => {
+const restartGame = _ => {
     console.log('running resetGame')
     questionIndices = randomizeArray([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
-    time = 30
+    time = 3000
     currentIndex = 0
     correct = 0
     incorrect = 0
@@ -50,7 +50,7 @@ const questionScreen = _ => {
                 </div>
             </div>
             <div id="question-container" class="grid-x align-center">
-                <div id="question" class="large-6 medium-8 small-12 cell"><h2>Why?</h2></div>
+                <div id="question" class="large-6 medium-8 small-12 cell text-center"><h2>Why?</h2></div>
             </div>
             <div id="answers-container" class="grid-x align-center">
                 <div class="large-6 medium-6 small-12 cell text-center">
@@ -65,25 +65,38 @@ const questionScreen = _ => {
         </div>`
 }
 
-const answerScreen = (statusLabel, correctLabel) => {
+const answerScreen = (status) => {
     clearInterval(timer)
-    currentIndex++
+    time = 3000
     document.querySelector('body').removeChild(document.querySelector('#container'))
     document.querySelector('body').innerHTML = `
         <div id="container" class="grid-y">
             <div class="cell text-center">
                 <h1>Trivia Title</h1>
             </div>
-            <div class="grid-x grid-padding-x align-center">
-                <div id="status-label" class="large-6 medium-6 small-6 cell text-right">
-                    <h3>${statusLabel}</h3>
-                    <br></br>
+            <div class="grid-y grid-padding-y align-center">
+                <div id="status-label" class="large-6 medium-6 small-6 cell text-center">
                 </div>  
-                <div id="correct-label" class="large-6 medium-6 small-6 cell text-left">
-                    <h3>${correctLabel}</h3>
+                <div id="correct-label" class="large-6 medium-6 small-6 cell text-center">
                 </div>
             </div>
         </div>`
+    switch (status) {
+        case 'correct':
+            document.querySelector('#status-label').innerHTML = '<h3>You are correct!</h3>'
+            break
+        case 'incorrect':
+            document.querySelector('#status-label').innerHTML = '<h3>You guessed incorrectly!</h3>'
+            document.querySelector('#correct-label').innerHTML = `<h3>The correct answer is: ${trivia[questionIndices[currentIndex]].correct_answer}</h3>`
+            break
+        case 'time':
+            document.querySelector('#status-label').innerHTML = '<h3>You ran out of time!</h3>'
+            document.querySelector('#correct-label').innerHTML = `<h3>The correct answer is: ${trivia[questionIndices[currentIndex]].correct_answer}</h3>`
+            break
+        default:
+            break
+    }
+    currentIndex++
     setTimeout(_ => {
         if (currentIndex < questionIndices.length) {
             nextQuestion()
@@ -91,6 +104,7 @@ const answerScreen = (statusLabel, correctLabel) => {
             startTimer()
         } else {
             console.log('End game')
+            endGame()
         }
     }, 3000)
 }
@@ -101,29 +115,12 @@ const nextQuestion = _ => {
     // setup next question and answers
     let currentTarget = trivia[questionIndices[currentIndex]]
 
-    console.log(`currentTarget = ${JSON.stringify(currentTarget)}`)
-
     document.querySelector('#question').innerHTML = `<h4>${currentTarget.question}</h4>`
     let answerIndices = randomizeArray([0, 1, 2, 3])
-    console.log(answerIndices)
     for (let i = 0; i < answerIndices.length; i++) {
-
-        console.log(`answerIndices[i] = ${answerIndices[i]}`)
-        console.log(`!answerIndices[i] = ${!answerIndices[i]}`)
-
         let tempText = document.querySelector(`#answer-${answerIndices[i]}`).textContent
 
-        console.log(`textContent = ${tempText}`)
-
-        if (answerIndices[i] === 3) {
-            document.querySelector(`#answer-${answerIndices[i]}`).textContent = currentTarget.correct_answer
-            console.log(`correct = ${currentTarget.correct_answer}`)
-        } else {
-            document.querySelector(`#answer-${answerIndices[i]}`).textContent = currentTarget.incorrect_answers[answerIndices[i]]
-            console.log(`${currentTarget.incorrect_answers}`)
-            console.log(answerIndices[i])
-            console.log(`incorrect = ${currentTarget.incorrect_answers[answerIndices[i]]}`)
-        }
+        document.querySelector(`#answer-${i}`).textContent = !answerIndices[i] ? currentTarget.correct_answer : currentTarget.incorrect_answers[answerIndices[i]-1]
     }
 }
 
@@ -138,18 +135,18 @@ const mouseOutAnswer = event => {
 }
 
 const clickAnswer = event => {
-    console.log(trivia[questionIndices[currentIndex]].incorrect_answers.includes(event.target.textContent) ? 
+    console.log(trivia[questionIndices[currentIndex]].incorrect_answers.includes(event.target.textContent) ?
         'Wrong' : 'Right')
     if (trivia[questionIndices[currentIndex]].incorrect_answers.includes(event.target.textContent)) {
         incorrect++
         // Go to show video screen
         // Wrong answer, the correct answer was ...
-        answerScreen('You guessed incorrectly!', `The correct answer was: ${trivia[questionIndices[currentIndex]].correct_answer}`)
+        answerScreen('incorrect')
     } else {
         correct++
         // Go to show video screen
         // Correct!
-        answerScreen('You are correct!')
+        answerScreen('correct')
     }
 }
 
@@ -175,7 +172,7 @@ const addAllListeners = _ => {
 const startTimer = _ => {
     console.log('running startTimer')
     timer = setInterval(_ => {
-        if (time > 0) {
+        if (time > 1) {
             time--
             document.querySelector('#timer').innerHTML = `<h3>${time} Seconds</h3>`
         } else {
@@ -184,9 +181,52 @@ const startTimer = _ => {
             // Run time ran out option
             // Go to show video screen
             // You ran out of time. The correct answer was ...
-            answerScreen('You ran out of time...', `The correct answer was: ${trivia[questionIndices[currentIndex]].correct_answer}`)
+            answerScreen('time')
         }
     }, 1000)
 }
 
-resetGame()
+const endGame = _ => {
+    document.querySelector('body').removeChild(document.querySelector('#container'))
+    document.querySelector('body').innerHTML = `
+        <div id="container" class="grid-y">
+            <div class="cell text-center">
+                <h1>Trivia Title</h1>
+            </div>
+            <div class="grid-x grid-padding-x align-center">
+                <div id="correct-label" class="large-6 medium-6 small-6 cell text-right">
+                    <h3>Correct: </h3>
+                </div>
+                <div id="correct" class="large-6 medium-6 small-6 cell text-left">
+                    <h3>${correct}</h3>
+                </div>
+            </div>
+            <div class="grid-x grid-padding-x align-center">
+                <div id="incorrect-label" class="large-6 medium-6 small-6 cell text-right">
+                    <h3>Incorrect: </h3>
+                </div>
+                <div id="incorrect" class="large-6 medium-6 small-6 cell text-left">
+                    <h3>${incorrect}</h3>
+                </div>
+            </div>
+            <div class="grid-x grid-padding-x align-center">
+                <div id="unanswered-label" class="large-6 medium-6 small-6 cell text-right">
+                    <h3>Unanswered: </h3>
+                </div>
+                <div id="unanswered" class="large-6 medium-6 small-6 cell text-left">
+                    <h3>${unanswered}</h3>
+                </div>
+            </div>
+            <div class="grid-x" align-center>
+                <div class="large-6 medium-6 small-6 cell text-center">
+                    <button id="restart-btn" class="button secondary medium-down-expanded>Play Again?</button>
+                </div>
+            </div>
+        </div>
+    `
+}
+
+document.querySelector('body').addEventListener('click', event => {
+    console.log(event)
+    event.target.id === 'restart-btn' ? restartGame() : ''
+})
