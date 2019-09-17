@@ -8,18 +8,13 @@ let correct = 0
 let incorrect = 0
 let unanswered = 0
 
-// Randomize elements of array
-const randomizeArray = arr => {
-    let currInd = arr.length
-    let temp
-    let randInd
-    while (currInd > 0) {
-        randInd = Math.floor(Math.random() * (currInd - 0.0001))
-        currInd--
-        temp = arr[currInd]
-        arr[currInd] = arr[randInd]
-        arr[randInd] = temp
-    }
+// Create array with arr.length = length and random unique elements within range [start, end]
+const randomArray = (length, start, end) => {
+    let arr = []
+    while (arr.length < length) {
+        let newElem = Math.floor(Math.random() * (end - start + 0.999) + start)
+        !arr.includes(newElem) ? arr.push(newElem) : ''
+    }   
     return arr
 }
 
@@ -27,10 +22,7 @@ const randomizeArray = arr => {
 const startGame = _ => {
     console.log('running resetGame')
     // Randomly choose the indices for the questions in the trivia array
-    while (questionIndices.length < 10) {
-        let newIndex = Math.floor(Math.random() * (trivia.length - 0.0001))
-        !questionIndices.includes(newIndex) ? questionIndices.push(newIndex) : ''
-    }
+    questionIndices = randomArray(10, 0, trivia.length-1)
     time = 30
     currentIndex = 0
     correct = 0
@@ -134,7 +126,7 @@ const nextQuestion = _ => {
     // Display current question
     document.querySelector('#question').innerHTML = `<h4>${currentQuestion.question}</h4>`
     // Randomize displayed answers
-    let answerIndices = randomizeArray([0, 1, 2, 3])
+    let answerIndices = randomArray(4, 0, 3)
     for (let i = 0; i < answerIndices.length; i++) {
         // If answer index is 0 then display correct answer, otherwise display the answer at index answerIndices[i]-1 in incorrect_answers
         document.querySelector(`#answer-${i}`).textContent = !answerIndices[i] ? currentQuestion.correct_answer : currentQuestion.incorrect_answers[answerIndices[i]-1]
