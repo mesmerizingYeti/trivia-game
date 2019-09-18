@@ -3,7 +3,7 @@ let questionIndices = []
 // Current index in questionIndices
 let currentIndex = 0
 let timer
-let time = 30
+let time = 20
 let correct = 0
 let incorrect = 0
 let unanswered = 0
@@ -23,10 +23,11 @@ const startGame = _ => {
     console.log('running resetGame')
     // Randomly choose the indices for the questions in the trivia array
     questionIndices = randomArray(10, 0, trivia.length-1)
-    time = 30
+    time = 20
     currentIndex = 0
     correct = 0
     incorrect = 0
+    unanswered = 0
     nextQuestion()
     addAllListeners()
     startTimer()
@@ -38,21 +39,21 @@ const questionScreen = _ => {
     document.querySelector('body').innerHTML = `
         <div id="container" class="grid-y">
             <div class="cell text-center">
-                <h1>Trivia Title</h1>
+                <h1>Computer Trivia</h1>
             </div>
             <div class="grid-x grid-padding-x align-center">
-                <div id="timer-label" class="large-6 medium-6 small-6 cell text-right">
+                <div id="timer-label" class="cell large-6 medium-6 small-6 hide-for-small-only text-right">
                     <h3>Time Remaining: </h3>
                 </div>  
-                <div id="timer" class="large-6 medium-6 small-6 cell text-left">
-                    <h3>30 Seconds</h3>
+                <div id="timer" class="cell large-6 medium-6 small-6 text-left">
+                    <h3>20 Seconds</h3>
                 </div>
             </div>
             <div id="question-container" class="grid-x align-center">
-                <div id="question" class="large-6 medium-8 small-12 cell text-center"><h2>Why?</h2></div>
+                <div id="question" class="cell large-6 medium-8 small-12 text-center"><h2>Why?</h2></div>
             </div>
             <div id="answers-container" class="grid-x align-center">
-                <div class="large-6 medium-6 small-12 cell text-center">
+                <div class="cell large-6 medium-6 small-12 text-center">
                     <ol id="answer-list">
                         <li id="answer-0" class="answer">None</li>
                         <li id="answer-1" class="answer">None</li>
@@ -67,17 +68,17 @@ const questionScreen = _ => {
 const answerScreen = (status) => {
     // Remove countdown
     clearInterval(timer)
-    time = 30
+    time = 20
     // Add elements for answer screen
     document.querySelector('body').innerHTML = `
         <div id="container" class="grid-y">
             <div class="cell text-center">
-                <h1>Trivia Title</h1>
+                <h1>Computer Trivia</h1>
             </div>
             <div class="grid-y grid-padding-y align-center">
-                <div id="status-label" class="large-6 medium-6 small-6 cell text-center">
+                <div id="status-label" class="cell large-6 medium-6 small-6 text-center">
                 </div>  
-                <div id="correct-label" class="large-6 medium-6 small-6 cell text-center">
+                <div id="correct-label" class="cell large-6 medium-6 small-6 text-center">
                 </div>
             </div>
         </div>`
@@ -146,17 +147,7 @@ const mouseOutAnswer = event => {
 }
 
 // Go to answer screen with parameter based on if answer is correct
-const clickAnswer = event => answerScreen(trivia[questionIndices[currentIndex]].incorrect_answers.includes(event.target.textContent) ? 'incorrect' : 'correct')
-
-// Remove event listeners for answers
-const clearAllListeners = _ => {
-    let answers = document.getElementsByClassName('answer')
-    for (let i = 0; i < answers.length; i++) {
-        answers[i].removeEventListener('mouseover', mouseOverAnswer)
-        answers[i].removeEventListener('mouseout', mouseOutAnswer)
-        answers[i].removeEventListener('click', clickAnswer)
-    }
-}
+const clickAnswer = event => answerScreen(trivia[questionIndices[currentIndex]].correct_answer === event.target.textContent ? 'correct' : 'incorrect')
 
 // Add event listeners for answers
 const addAllListeners = _ => {
@@ -190,32 +181,32 @@ const endGame = _ => document.querySelector('body').innerHTML = `
                 <h1>Trivia Title</h1>
             </div>
             <div class="grid-x grid-padding-x align-center">
-                <div id="correct-label" class="large-6 medium-6 small-6 cell text-right">
+                <div id="correct-label" class="cell large-6 medium-6 small-6 text-right">
                     <h3>Correct: </h3>
                 </div>
-                <div id="correct" class="large-6 medium-6 small-6 cell text-left">
+                <div id="correct" class="cell large-6 medium-6 small-6 text-left">
                     <h3>${correct}</h3>
                 </div>
             </div>
             <div class="grid-x grid-padding-x align-center">
-                <div id="incorrect-label" class="large-6 medium-6 small-6 cell text-right">
+                <div id="incorrect-label" class="cell large-6 medium-6 small-6 text-right">
                     <h3>Incorrect: </h3>
                 </div>
-                <div id="incorrect" class="large-6 medium-6 small-6 cell text-left">
+                <div id="incorrect" class="cell large-6 medium-6 small-6 text-left">
                     <h3>${incorrect}</h3>
                 </div>
             </div>
             <div class="grid-x grid-padding-x align-center">
-                <div id="unanswered-label" class="large-6 medium-6 small-6 cell text-right">
+                <div id="unanswered-label" class="cell large-6 medium-6 small-6 text-right">
                     <h3>Unanswered: </h3>
                 </div>
-                <div id="unanswered" class="large-6 medium-6 small-6 cell text-left">
+                <div id="unanswered" class="cell large-6 medium-6 small-6 text-left">
                     <h3>${unanswered}</h3>
                 </div>
             </div>
-            <div class="grid-x" align-center>
-                <div class="large-6 medium-6 small-6 cell text-center">
-                    <button id="start-btn" class="button secondary medium-down-expanded">Play Again?</button>
+            <div class="grid-x grid-padding-x align-center">
+                <div class="cell large-6 medium-6 small-12">
+                    <button id="start-btn" class="button primary expanded">Play Again?</button>
                 </div>
             </div>
         </div>`

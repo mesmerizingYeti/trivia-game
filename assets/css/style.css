@@ -8,3 +8,7 @@ body {
 h3 {
     display: inline;
 }
+
+.answer {
+    cursor: pointer;
+}
