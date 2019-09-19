@@ -28,6 +28,11 @@ const startGame = _ => {
     correct = 0
     incorrect = 0
     unanswered = 0
+    // Reset scorecard display
+    let scores = document.querySelector('.score')
+    for (let i = 0; i < scores.length; i++) {
+        scores[i].style.backgroundColor = 'white'
+    }
     nextQuestion()
     addAllListeners()
     startTimer()
@@ -36,12 +41,17 @@ const startGame = _ => {
 
 // Adds elements for question screen
 const questionScreen = _ => document.querySelector('#container').innerHTML = `
-    <div class="grid-x grid-padding-x align-center">
+    <!--<div class="grid-x grid-padding-x align-center">
         <div id="timer-label" class="cell large-6 medium-6 small-6 hide-for-small-only text-right">
             <h3>Time Remaining: </h3>
         </div>  
         <div id="timer" class="cell large-6 medium-6 small-6 text-left">
             <h3>20 Seconds</h3>
+        </div>
+    </div>-->
+    <div id="timer-container">
+        <div id="timer">
+            <h3>20</h3>
         </div>
     </div>
     <div id="question-container" class="grid-x align-center">
@@ -64,31 +74,43 @@ const answerScreen = (status) => {
     time = 20
     // Add elements for answer screen
     document.querySelector('#container').innerHTML = `
-        <div class="grid-y grid-padding-y align-center">
-            <div id="status-label" class="cell large-6 medium-6 small-6 text-center">
-            </div>  
-            <div id="correct-label" class="cell large-6 medium-6 small-6 text-center">
-            </div>
+        <div class="grid-y grid-padding-y align-middle">
+            <div id="status-container" class="cell text-center"></div>  
+            <div id="correct-answer" class="cell text-center"></div>
+            <div id="gif-container" class="cell"></div>
         </div>`
+    // Grab current trivia question
+    let currentTrivia = trivia[questionIndices[currentIndex]]
     // Change display and increment variable based on status of question 
     switch (status) {
         case 'correct':
-            document.querySelector('#status-label').innerHTML = '<h3>You are correct!</h3>'
+            document.querySelector(`#scorecard-${currentIndex}`).style.backgroundColor = 'green'
+            document.querySelector('#status-container').innerHTML = '<h3><b>You are correct!</b></h3>'
             correct++
             break
         case 'incorrect':
-            document.querySelector('#status-label').innerHTML = '<h3>You guessed incorrectly!</h3>'
-            document.querySelector('#correct-label').innerHTML = `<h3>The correct answer is: <strong>${trivia[questionIndices[currentIndex]].correct_answer}</strong></h3>`
+            document.querySelector(`#scorecard-${currentIndex}`).style.backgroundColor = 'red'
+            document.querySelector('#status-container').innerHTML = '<h3><b>You guessed incorrectly!</b></h3>'
+            document.querySelector('#correct-answer').innerHTML = `<h3>The correct answer is: <strong>${currentTrivia.correct_answer}</strong></h3>`
             incorrect++
             break
         case 'time':
-            document.querySelector('#status-label').innerHTML = '<h3>You ran out of time!</h3>'
-            document.querySelector('#correct-label').innerHTML = `<h3>The correct answer is: ${trivia[questionIndices[currentIndex]].correct_answer}</h3>`
+            document.querySelector(`#scorecard-${currentIndex}`).style.backgroundColor = 'black'
+            document.querySelector('#status-container').innerHTML = '<h3><b>You ran out of time!</b></h3>'
+            document.querySelector('#correct-answer').innerHTML = `<h3>The correct answer is: ${currentTrivia.correct_answer}</h3>`
             unanswered++
             break
         default:
             break
     }
+    // Add gif from giphy API
+    fetch(`https://api.giphy.com/v1/gifs/search?api_key=3SAWLXxeqLkPwaU2IUJhyQ6EAswy7DgM&q=${currentTrivia.search}&limit=1&rating=pg`)
+        .then(r => r.json())
+        .then(gifs => {
+            console.log(gifs)
+            document.querySelector('#gif-container').innerHTML = `<img id="gif" src="${gifs.data[0].images.original.url}" alt="${currentTrivia.search}">`
+        })
+        .catch(e => console.log(e))
     // Increment index for current question
     currentIndex++
     // Wait 3 seconds before next question
@@ -113,7 +135,7 @@ const nextQuestion = _ => {
     // Select next question from randomized indices(questionIndices) using currentIndex
     let currentQuestion = trivia[questionIndices[currentIndex]]
     // Display current question
-    document.querySelector('#question').innerHTML = `<h3><strong>${currentQuestion.question}</strong></h3>`
+    document.querySelector('#question').innerHTML = `<h3><b id="question-text">${currentQuestion.question}</b></h3>`
     // Randomize displayed answers
     let answerIndices = randomArray(4, 0, 3)
     for (let i = 0; i < answerIndices.length; i++) {
@@ -147,14 +169,24 @@ const addAllListeners = _ => {
     }
 }
 
-// Start 30 second timer for question
+// Start 20 second timer for question
 const startTimer = _ => {
     console.log('running startTimer')
     timer = setInterval(_ => {
         if (time > 1) {
             // Decrement time and display
             time--
-            document.querySelector('#timer').innerHTML = `<h3>${time} Seconds</h3>`
+            switch (time) {
+                case 10:
+                    document.querySelector('#timer-container').style.backgroundColor = 'rgb(190, 190, 20)'
+                    break
+                case 5:
+                    document.querySelector('#timer-container').style.backgroundColor = 'red'
+                    break
+                default:
+                    break
+            }
+            document.querySelector('#timer').innerHTML = `<h3>${time}</h3>`
         } else {
             // Time ran out so go to answer screen
             answerScreen('time')
@@ -190,13 +222,13 @@ const endGame = _ => document.querySelector('#container').innerHTML = `
     </div>
     <div class="grid-x grid-padding-x align-center">
         <div class="cell large-6 medium-6 small-12">
-            <button class="button primary expanded restart-btn">Play Again?</button>
+            <button class="button bg-middle-green restart-btn">Play Again?</button>
         </div>
     </div>`
 
 // Add event listener for the start game button
-document.querySelector('body').addEventListener('click', event => {
-    console.log(event)
-    console.log(event.target.className.includes('restart-btn'))
-    event.target.className.includes('restart-btn') ? startGame() : ''
-})
+document.querySelector('body').addEventListener('click', event => event.target.className.includes('restart-btn') ? startGame() : '')
+
+document.querySelector('body').addEventListener('mouseover', event => event.target.className.includes('restart-btn') ? event.target.style.backgroundColor = '#77B28C' : '')
+
+document.querySelector('body').addEventListener('mouseout', event => event.target.className.includes('restart-btn') ? event.target.style.backgroundColor = '#499F68' : '')

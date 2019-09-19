@@ -15,15 +15,35 @@
     <div id="background"></div>
     <div class="top-bar" id="responsive-menu">
         <div class="top-bar-left">
-            <ul class="dropdown menu" data-dropdown-menu>
+            <ul class="menu">
                 <li class="menu-text"><strong>Computer Trivia</strong></li>
             </ul>
         </div>
         <div class="top-bar-right">
-            <ul class="menu">
-                <li><input type="search" placeholder="Search"></li>
-                <li><button type="button" class="button">Search</button></li>
-            </ul>
+            <div class="grid-x score-container">
+                <div id="scorecard-0" class="cell score"></div>
+                <div id="scorecard-1" class="cell score"></div>
+                <div id="scorecard-2" class="cell score"></div>
+                <div id="scorecard-3" class="cell score"></div>
+                <div id="scorecard-4" class="cell score"></div>
+                <div id="scorecard-5" class="cell score"></div>
+                <div id="scorecard-6" class="cell score"></div>
+                <div id="scorecard-7" class="cell score"></div>
+                <div id="scorecard-8" class="cell score"></div>
+                <div id="scorecard-9" class="cell score"></div>
+            </div>
+            <!-- <ul class="menu scoreboard">
+                <li class="menu-text score">O</li>
+                <li class="menu-text score">O</li>
+                <li class="menu-text score">O</li>
+                <li class="menu-text score">O</li>
+                <li class="menu-text score">O</li>
+                <li class="menu-text score">O</li>
+                <li class="menu-text score">O</li>
+                <li class="menu-text score">O</li>
+                <li class="menu-text score">O</li>
+                <li class="menu-text score">O</li>
+            </ul> -->
         </div>
     </div>
     <div id="main" class="grid-x grid-padding-x">
@@ -31,7 +51,7 @@
         <div class="cell large-12 medium-12 small-12">
             <div id="container" class="grid-y bg-silver">
                 <!-- Button to start game -->
-                <button id="start" class="button bg-green-sheen restart-btn">Start Game</button>
+                <button id="start" class="button bg-middle-green restart-btn">Start Game</button>
             </div>
         </div>
     </div>
