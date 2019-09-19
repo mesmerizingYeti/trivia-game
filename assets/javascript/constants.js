@@ -57,7 +57,7 @@ let trivia = [
         question: "All of the following programs are classified as raster graphics editors EXCEPT:",
         correct_answer: "Inkscape",
         incorrect_answers: ["Paint.NET", "GIMP", "Adobe Photoshop"],
-        search: 'Inkscape'
+        search: 'bitmap'
     }, {
         question: "The computer OEM manufacturer Clevo, known for its Sager notebook line, is based in which country?",
         correct_answer: "Taiwan",
@@ -67,7 +67,7 @@ let trivia = [
         question: "What did the name of the Tor Anonymity Network orignially stand for?",
         correct_answer: "The Onion Router",
         incorrect_answers: ["The Only Router", "The Orange Router", "The Ominous Router"],
-        search: 'Onion'
+        search: 'onion hand speed'
     }, {
         question: "What was the name given to Android 4.3?",
         correct_answer: "Jelly Bean",

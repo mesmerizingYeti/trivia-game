@@ -199,6 +199,11 @@ h3 {
         text-align: right;
     }
 
+    #gif {
+        max-height: 200px;
+        max-width: 200px;
+    }
+
 }
 
  /* Medium Screens */
