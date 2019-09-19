@@ -12,19 +12,26 @@
 </head>
 
 <body>
-    <div class="grid-x">
-        
-    </div>
-    <div id="scorecard" class="grid-y"></div>
-    <!-- Beginning Display -->
-    <div id="container" class="grid-y">
-        <div class="cell text-center">
-            <h1>Computer Trivia</h1>
+    <div id="background"></div>
+    <div class="top-bar" id="responsive-menu">
+        <div class="top-bar-left">
+            <ul class="dropdown menu" data-dropdown-menu>
+                <li class="menu-text"><strong>Computer Trivia</strong></li>
+            </ul>
         </div>
-        <div class="grid-x grid-padding-x align-center">
-            <div class="cell large-6 medium-6 small-12">
+        <div class="top-bar-right">
+            <ul class="menu">
+                <li><input type="search" placeholder="Search"></li>
+                <li><button type="button" class="button">Search</button></li>
+            </ul>
+        </div>
+    </div>
+    <div id="main" class="grid-x grid-padding-x">
+        <!-- Beginning Display -->
+        <div class="cell large-12 medium-12 small-12">
+            <div id="container" class="grid-y bg-silver">
                 <!-- Button to start game -->
-                <button id="start-btn" class="button primary expanded">Start Game</button>
+                <button id="start" class="button bg-green-sheen restart-btn">Start Game</button>
             </div>
         </div>
     </div>
